@@ -7,7 +7,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from accounts.serializers import CreateUserSerializer, ChangePasswordSerializer
+from main.serializers import CreateUserSerializer, ChangePasswordSerializer
 
 
 class CreateUserAPIView(CreateAPIView):

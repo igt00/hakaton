@@ -1,13 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-from main.choices import GENDER_CHOICES
+from main.choices import GenderChoice
 
 class User2(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     surname = models.CharField(max_length=40, verbose_name='Фамилия')
     first_name = models.CharField(max_length=40, verbose_name='Имя')
     second_name = models.CharField(max_length=40, verbose_name='Отчество', blank=True, null=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Пол', blank=True, null=True)
+    gender = models.CharField(max_length=1, choices=GenderChoice.GENDER_CHOICES, verbose_name='Пол', blank=True, null=True)
     dt_created = models.DateField(auto_now_add=True)
     phone = models.CharField(max_length=20, verbose_name='Телефон', null=True, blank=True)
     email = models.CharField(max_length=50, verbose_name='Мейл', unique=True)
