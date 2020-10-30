@@ -10,7 +10,7 @@ class User2(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Пол', blank=True, null=True)
     dt_created = models.DateField(auto_now_add=True)
     phone = models.CharField(max_length=20, verbose_name='Телефон', null=True, blank=True)
-    email = models.CharField(max_length=50, verbose_name='Мейл'm unique=True)
+    email = models.CharField(max_length=50, verbose_name='Мейл', unique=True)
     dt_birthday = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
 
 
