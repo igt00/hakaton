@@ -30,6 +30,7 @@ class CreateUserSerializer(serializers.Serializer):
             second_name=validated_data['second_name'],
             surname=validated_data['surname'],
             dt_birthday=validated_data['birthday'],
+            email=validated_data['email'],
         )
 
         return user

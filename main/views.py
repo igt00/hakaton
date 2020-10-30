@@ -11,10 +11,15 @@ from main.models import User2
 from main.serializers import CreateUserSerializer, ChangePasswordSerializer
 
 
-class CreateUserAPIView(CreateAPIView):
+class CreateUserAPIView(views.APIView):
     authentication_classes = ()
     permission_classes = ()
-    serializer_class = CreateUserSerializer
+
+    def post(self, request):
+        serializer = CreateUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status.HTTP_200_OK)
 
 
 class LoginUserAPIView(views.APIView):
