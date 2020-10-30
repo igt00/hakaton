@@ -15,14 +15,22 @@ class User2(models.Model):
     dt_birthday = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
 
 
+class Teacher(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Pupil(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class CodeTask(models.Model):
-    teacher = models.ForeignKey(User2, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
 
 class CodePupilTask(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
-    pupil = models.ForeignKey(User2, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
+    pupil = models.ForeignKey(Pupil, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
 
 
 class ProgLanguage(models.Model):
@@ -34,6 +42,7 @@ class CodePupilTaskTry(models.Model):
     pupil_task = models.ForeignKey(CodePupilTask, on_delete=models.CASCADE)
     language = models.ForeignKey(ProgLanguage, on_delete=models.CASCADE)
     code = models.TextField(verbose_name='Код ученика')
+
 
 # class CodeTaskFile(models.Model):
 #     file_m = models.FileField()
