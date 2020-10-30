@@ -52,3 +52,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 #     def validate_password(self, password):
 #         validate_password(password)
 #         return password
+
+
+class CabinetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User2
+        fields = '__all__'

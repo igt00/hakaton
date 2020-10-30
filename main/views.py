@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from main.models import User2
-from main.serializers import CreateUserSerializer, ChangePasswordSerializer
+from main.serializers import CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer
 
 
 class CreateUserAPIView(views.APIView):
@@ -75,9 +75,13 @@ class ChangePasswordAPIView(views.APIView):
 #         is_pupil = Pupil.objects.filter(user=user2).first()
 
 
-# class CabinetAPIView(RetrieveAPIView):
-#     authentication_classes = [SessionAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = CabinetSerializer
-#
-#     def get(self, request):
+class CabinetAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = CabinetSerializer(request.user.user2)
+        return Response(serializer.data)
+
+    def put(self, request):
+        pass
