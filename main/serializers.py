@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 
-from main.models import User2
+from main.models import User2, Teacher, Pupil
 from main.validators import validate_password
 
 
@@ -15,6 +15,7 @@ class CreateUserSerializer(serializers.Serializer):
     birthday = serializers.DateField()
     password = serializers.CharField()
     email = serializers.CharField()
+    is_teacher = serializers.BooleanField()
 
     def create(self, validated_data):
         user = User(
@@ -32,6 +33,10 @@ class CreateUserSerializer(serializers.Serializer):
             dt_birthday=validated_data['birthday'],
             email=validated_data['email'],
         )
+        if validated_data['is_teacher']:
+            Teacher.objects.create(user=user)
+        else:
+            Pupil.objects.create(user=user)
 
         return token
 
