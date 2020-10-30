@@ -23,7 +23,7 @@ class CreateUserSerializer(serializers.Serializer):
         )
         user.set_password(validated_data['password'])
         user.save()
-        Token.objects.create(user=user)
+        token = Token.objects.create(user=user)
         User2.objects.create(
             user=user,
             first_name=validated_data['first_name'],
@@ -33,7 +33,7 @@ class CreateUserSerializer(serializers.Serializer):
             email=validated_data['email'],
         )
 
-        return user
+        return token
 
 #     def validate_password(self, password):
 #         validate_password(password)

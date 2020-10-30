@@ -1,9 +1,11 @@
 from rest_framework import views, status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 
 from django.contrib.auth import authenticate, login, logout
 
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -19,7 +21,7 @@ class CreateUserAPIView(views.APIView):
         serializer = CreateUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status.HTTP_200_OK)
+        return Response({'token_key': serializers.data.key}, status.HTTP_200_OK)
 
 
 class LoginUserAPIView(views.APIView):
@@ -32,7 +34,8 @@ class LoginUserAPIView(views.APIView):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return Response(status=status.HTTP_200_OK)
+            token = get_object_or_404(Token, user=user)
+            return Response({'token_key': token.key}, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -70,3 +73,11 @@ class ChangePasswordAPIView(views.APIView):
 #         user2 = request.user.user2
 #         is_teacher = Teacher.objects.filter(user=user2).first()
 #         is_pupil = Pupil.objects.filter(user=user2).first()
+
+
+# class CabinetAPIView(RetrieveAPIView):
+#     authentication_classes = [SessionAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = CabinetSerializer
+#
+#     def get(self, request):
