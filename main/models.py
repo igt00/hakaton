@@ -15,22 +15,14 @@ class User2(models.Model):
     dt_birthday = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
 
 
-class Teacher(models.Model):
-    user2 = models.ForeignKey(User2, on_delete=models.CASCADE, verbose_name='Пользователь-учитель')
-
-
-class Pupil(models.Model):
-    user2 = models.ForeignKey(User2, on_delete=models.CASCADE, verbose_name='Пользователь-ученик')
-
-
 class CodeTask(models.Model):
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Учитель')
+    teacher = models.ForeignKey(User2, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
 
 class CodePupilTask(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
-    pupil = models.ForeignKey(Pupil, on_delete=models.CASCADE)
+    pupil = models.ForeignKey(User2, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
 
 
 class ProgLanguage(models.Model):

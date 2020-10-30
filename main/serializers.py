@@ -9,8 +9,8 @@ from main.validators import validate_password
 
 
 class CreateUserSerializer(serializers.Serializer):
-    firstname = serializers.CharField()
-    secondname = serializers.CharField()
+    first_name = serializers.CharField()
+    second_name = serializers.CharField()
     surname = serializers.CharField()
     birthday = serializers.DateField()
     password = serializers.CharField()
@@ -26,8 +26,8 @@ class CreateUserSerializer(serializers.Serializer):
         Token.objects.create(user=user)
         User2.objects.create(
             user=user,
-            firstname=validated_data['firstname'],
-            secondname=validated_data['secondname'],
+            first_name=validated_data['first_name'],
+            second_name=validated_data['second_name'],
             surname=validated_data['surname'],
             dt_birthday=validated_data['birthday'],
         )

@@ -7,6 +7,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from main.models import User2
 from main.serializers import CreateUserSerializer, ChangePasswordSerializer
 
 
@@ -54,3 +55,13 @@ class ChangePasswordAPIView(views.APIView):
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
         return Response(status=status.HTTP_200_OK)
+
+
+# def ProfileAPIView(views.APIView):
+#     authentication_classes = [SessionAuthentication]
+#     permission_classes = [IsAuthenticated]
+#
+#     def get(self, request):
+#         user2 = request.user.user2
+#         is_teacher = Teacher.objects.filter(user=user2).first()
+#         is_pupil = Pupil.objects.filter(user=user2).first()
