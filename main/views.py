@@ -177,3 +177,12 @@ class ClassInfoAPIView(views.APIView):
                 'first_name': pup.user.first_name,
                 'second_name': pup.user.second_name,
             })
+
+
+class TeachersPupilsAPIView(TeacherMixin, ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CabinetSerializer
+
+    def get_queryset(self):
+        pass
