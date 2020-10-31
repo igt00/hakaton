@@ -12,7 +12,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
-        if User2.objects.get(user=request.user).exists():
-            if Teacher.objects.get(user=request.user.user2).exists():
+        if User2.objects.filter(user=request.user).exists():
+            if Teacher.objects.filter(user=request.user.user2).exists():
                 return True
         raise PermissionDenied
