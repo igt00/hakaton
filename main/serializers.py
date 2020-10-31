@@ -97,7 +97,7 @@ class SingleTasksListSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'pupils_count']
 
     def get_pupils_count(self, obj):
-        return obj.codepupiltask_set.count()
+        return obj.get_tasks_pupil_count()
 
 
 class PupilTaskListSerializer(serializers.ModelSerializer):

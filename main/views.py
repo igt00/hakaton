@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilTask
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilTask, TestData
 from main.mixins import TeacherMixin, PupilMixin
 from main.serializers import (
     CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer,
@@ -265,3 +265,11 @@ class PupilsCurrentTaskAPIView(PupilMixin, RetrieveAPIView):
     serializer_class = PupilTaskListSerializer
     lookup_field = 'task_id'
     queryset = CodePupilTask.objects.all()
+
+
+class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, PupilPermission]
+
+    def post(self, request, task_id):
+        pass

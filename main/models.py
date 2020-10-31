@@ -47,6 +47,12 @@ class CodeTask(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
+    def get_tasks_pupil(self):
+        return self.codepupiltask_set.all()
+
+    def get_tasks_pupil_count(self):
+        return self.get_tasks_pupil().count()
+
 
 class CodeToLesson(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
