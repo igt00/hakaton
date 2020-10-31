@@ -1,7 +1,8 @@
 from django.urls import path
 
 from main.views import (
-    CreateUserAPIView, LoginUserAPIView, ChangePasswordAPIView, LogoutUserAPIView, CabinetAPIView
+    CreateUserAPIView, LoginUserAPIView, ChangePasswordAPIView, LogoutUserAPIView, CabinetAPIView, PupilsListAPIView,
+    AddPupilToTeacherAPIView,
 )
 
 urlpatterns = [
@@ -10,5 +11,6 @@ urlpatterns = [
     path('logout/', LogoutUserAPIView.as_view(), name='logout'),
     path('change_pass/', ChangePasswordAPIView.as_view(), name='change_pass'),
     path('cabinet/', CabinetAPIView.as_view(), name='cabinet'),
-#     path('pupils')
+    path('pupils/', PupilsListAPIView.as_view(), name='pupil_list'),
+    path('add_pupils/', AddPupilToTeacherAPIView.as_view(),name='add_pupils')
 ]

@@ -16,15 +16,16 @@ class User2(models.Model):
 
 
 class Teacher(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User2, on_delete=models.CASCADE)
 
 
 class Pupil(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User2, on_delete=models.CASCADE)
+    teachers = models.ManyToManyField(Teacher, null=True, blank=True)
 
 
 class CodeTask(models.Model):
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
+    teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
 

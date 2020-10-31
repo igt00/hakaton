@@ -1,5 +1,5 @@
 from rest_framework import views, status
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
 
 from django.contrib.auth import authenticate, login, logout
 
@@ -9,7 +9,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import User2
+from main.models import User2, Teacher, Pupil
 from main.serializers import CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer
 
 
@@ -85,3 +85,25 @@ class CabinetAPIView(views.APIView):
 
     def put(self, request):
         pass
+
+
+class PupilsListAPIView(ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CabinetSerializer
+
+    def get_queryset(self):
+        user_pupil_ids = Pupil.objects.all().values_list('user_id', flat=True)
+        return User2.objects.filter(id__in=user_pupil_ids)
+
+
+class AddPupilToTeacherAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        teacher = Teacher.objects.get(user=request.user.user2)
+        pupils_id = request.data['pupils_id']
+        teacher.pupil_id.add(Pupil.objects.filter(id__in=pupils_id))
+        teacher.save()
+        return Response(status.HTTP_200_OK)

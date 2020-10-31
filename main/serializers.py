@@ -35,9 +35,9 @@ class CreateUserSerializer(serializers.Serializer):
             email=validated_data['email'],
         )
         if validated_data['is_teacher']:
-            Teacher.objects.create(user=user)
+            Teacher.objects.create(user=user.user2)
         else:
-            Pupil.objects.create(user=user)
+            Pupil.objects.create(user=user.user2)
 
         return user
 
@@ -61,6 +61,12 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class CabinetSerializer(serializers.ModelSerializer):
+    pupil_id = serializers.SerializerMethodField()
+
     class Meta:
         model = User2
-        fields = '__all__'
+        fields = ['surname', 'first_name', 'second_name', 'gender', 'dt_created', 'email', 'dt_birthday', 'pupil_id']
+
+    def get_pupil_id(self, user):
+        return user.pupil.id
+
