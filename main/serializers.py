@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 
-from main.models import User2, Teacher, Pupil, PupilsClass
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask
 from main.validators import validate_password
 
 
@@ -87,3 +87,14 @@ class PupilClassSerializer(serializers.ModelSerializer):
 
     def get_pupils(self, obj):
         return CabinetSerializer(obj.pupils, many=True).data
+
+
+class SingleTasksListSerializer(serializers.ModelSerializer):
+    pupils_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CodeTask
+        fields = ['name', 'pupils_count']
+
+    def get_pupils_count(self, obj):
+        return obj.codepupiltask_set.count()

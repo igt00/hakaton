@@ -13,7 +13,8 @@ from rest_framework.response import Response
 from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask
 from main.mixins import TeacherMixin
 from main.serializers import (
-    CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer
+    CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer,
+    SingleTasksListSerializer,
 )
 from main.permissons import TeacherPermission
 
@@ -226,3 +227,11 @@ class CreateSingleTaskAPIView(TeacherMixin, views.APIView):
         return Response({'task_id': task.id}, status.HTTP_200_OK)
 
 
+class SingleTasksListAPIView(TeacherMixin, ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+    serializer_class = SingleTasksListSerializer
+
+    def get_queryset(self):
+        teacher = self.get_teacher(self.request)
+        return teacher.codetask_set.all()
