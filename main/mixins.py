@@ -9,8 +9,5 @@ class TeacherMixin(object):
 
 class PupilMixin(object):
 
-    def __init__(self, request):
-        self.pupil = Pupil.objects.get(user=request.user.user2)
-
-    def get_teacher(self):
-        return self.pupil
+    def get_pupil(self, request):
+        return Pupil.objects.get(user=request.user.user2)

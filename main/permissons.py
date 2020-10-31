@@ -18,7 +18,7 @@ class TeacherPermission(permissions.BasePermission):
         raise PermissionDenied
 
 
-class IsOwnerOrReadOnlyPypil(permissions.BasePermission):
+class PupilPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
