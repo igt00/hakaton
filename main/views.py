@@ -21,7 +21,7 @@ class CreateUserAPIView(views.APIView):
         serializer = CreateUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'token_key': serializer.data.key}, status.HTTP_200_OK)
+        return Response({'token_key': serializer.data['auth_token']}, status.HTTP_200_OK)
 
 
 class LoginUserAPIView(views.APIView):

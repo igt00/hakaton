@@ -9,13 +9,14 @@ from main.validators import validate_password
 
 
 class CreateUserSerializer(serializers.Serializer):
-    first_name = serializers.CharField()
-    second_name = serializers.CharField()
-    surname = serializers.CharField()
-    birthday = serializers.DateField()
-    password = serializers.CharField()
-    email = serializers.CharField()
-    is_teacher = serializers.BooleanField()
+    first_name = serializers.CharField(write_only=True)
+    second_name = serializers.CharField(write_only=True)
+    surname = serializers.CharField(write_only=True)
+    birthday = serializers.DateField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    email = serializers.CharField(write_only=True)
+    is_teacher = serializers.BooleanField(write_only=True)
+    auth_token = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
         user = User(
@@ -38,7 +39,7 @@ class CreateUserSerializer(serializers.Serializer):
         else:
             Pupil.objects.create(user=user)
 
-        return token
+        return user
 
 #     def validate_password(self, password):
 #         validate_password(password)

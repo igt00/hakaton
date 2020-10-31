@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'hakaton.middlewares.UserToRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'hakaton.urls'
@@ -136,3 +137,4 @@ STATIC_URL = '/static/'
 ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+

@@ -10,4 +10,5 @@ urlpatterns = [
     path('logout/', LogoutUserAPIView.as_view(), name='logout'),
     path('change_pass/', ChangePasswordAPIView.as_view(), name='change_pass'),
     path('cabinet/', CabinetAPIView.as_view(), name='cabinet'),
+#     path('pupils')
 ]
