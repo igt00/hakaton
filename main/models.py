@@ -63,8 +63,14 @@ class CodePupilTask(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
     pupil = models.ForeignKey(Pupil, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
 
+    def get_tries(self):
+        return self.codepupiltasktry_set.all()
+
     def check_is_ready(self):
-        return self.codepupiltask_set.filter(status=1).exists()
+        return self.get_tries().filter(status=1).exists()
+
+    def get_count_tries(self):
+        return self.get_tries().count()
 
 
 class ProgLanguage(models.Model):
