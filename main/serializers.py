@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 
-from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, ProgLanguage
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, ProgLanguage, CodePupilTask
 from main.validators import validate_password
 
 
@@ -26,6 +26,8 @@ class CreateUserSerializer(serializers.Serializer):
         user.set_password(validated_data['password'])
         user.save()
         token = Token.objects.create(user=user)
+        user.auth_token = token
+        user.save()
         User2.objects.create(
             user=user,
             first_name=validated_data['first_name'],
@@ -102,13 +104,23 @@ class SingleTasksListSerializer(serializers.ModelSerializer):
 
 class PupilTaskListSerializer(serializers.ModelSerializer):
     is_ready = serializers.SerializerMethodField()
+    teacher = serializers.SerializerMethodField()
+    name = serializers.CharField(source='task.name')
+    id = serializers.IntegerField(source='task.id', read_only=True)
 
     class Meta:
-        model = CodeTask
-        fields = ['id', 'name', 'is_ready']
+        model = CodePupilTask
+        fields = ['id', 'name', 'is_ready', 'teacher']
 
-    def get_status(self, obj):
+    def get_is_ready(self, obj):
         return obj.check_is_ready()
+
+    def get_teacher(self, obj):
+        return {
+            'surname': obj.task.teacher.user.surname,
+            'first_name': obj.task.teacher.user.first_name,
+            'second_name': obj.task.teacher.user.second_name,
+        }
 
 
 class ProgLanguageSerializer(serializers.ModelSerializer):

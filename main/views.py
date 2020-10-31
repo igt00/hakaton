@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilTask, TestData, ProgLanguage
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilTask, TestData, ProgLanguage, CodePupilTaskTry
 from main.mixins import TeacherMixin, PupilMixin
 from main.serializers import (
     CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer,
@@ -33,21 +33,23 @@ class CreateUserAPIView(views.APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         token = serializer.data['auth_token']
-        user = User.objects.get(auth_token=token)
-        user2 = User2.objects.get(user=user)
-        data = {'token_key': token}
-        try:
-            teacher = Teacher.objects.get(user=user2)
-        except:
-            teacher = None
-        try:
-            pupil = Pupil.objects.get(user=user2)
-        except:
-            pupil = None
-        if teacher:
-            data['is_teacher'] = True
-        elif pupil:
-            data['is_teacher'] = False
+#         print(token)
+#         user = User.objects.get(auth_token=token)
+#         print(user)
+#         user2 = User2.objects.get(user=user)
+#         data = {'token_key': token}
+#         try:
+#             teacher = Teacher.objects.get(user=user2)
+#         except:
+#             teacher = None
+#         try:
+#             pupil = Pupil.objects.get(user=user2)
+#         except:
+#             pupil = None
+#         if teacher:
+#             data['is_teacher'] = True
+#         elif pupil:
+#             data['is_teacher'] = False
         return Response(data, status.HTTP_200_OK)
 
 
@@ -293,9 +295,30 @@ class PupilsTasksAPIView(PupilMixin, ListAPIView):
 class PupilsCurrentTaskAPIView(PupilMixin, RetrieveAPIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated, PupilPermission]
-    serializer_class = PupilTaskListSerializer
-    lookup_field = 'task_id'
-    queryset = CodePupilTask.objects.all()
+
+    def get(self, request, task_id):
+        pupil = self.get_pupil(request)
+        task = CodeTask.objects.get(pk=task_id)
+        pupilcodetask = CodePupilTask.objects.get(pupil=pupil, task=task)
+        data = {}
+        data['id'] = task.id
+        data['name'] = task.name
+        data['descr'] = task.description
+        data['is_ready'] = pupilcodetask.check_is_ready()
+        tries_data = []
+        for test in pupilcodetask.get_tries().order_by('-id'):
+            tries_data.append({
+                'try_status': test.status,
+                'tests_count': test.tests_count,
+                'failed_tests_count': test.failed_tests_count,
+            })
+        data['tries_data'] = tries_data
+        data['teacher'] = {
+            'surname': task.teacher.user.surname,
+            'first_name': task.teacher.user.first_name,
+            'second_name': task.teacher.user.second_name,
+        }
+        return Response(data, status.HTTP_200_OK)
 
 
 class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
@@ -303,7 +326,8 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
     permission_classes = [IsAuthenticated, PupilPermission]
 
     def post(self, request, task_id):
-        language = get_object_or_404(ProgLanguage, pk=request.data['lang'])
+        pupil = self.get_pupil(request)
+        language = get_object_or_404(ProgLanguage, name=request.data['lang'])
         code = request.data['code']
         task = get_object_or_404(CodeTask, pk=task_id)
         input= []
@@ -314,26 +338,34 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
         runner = Runner(code, language.name, request.user.username, output, input)
         result = runner.run_compile()
 
-        print(result)
-        failed_counts = 0
-        tests_count = len(result)
-        for test in result:
-            if test == 'ERROR':
-                failed_counts += 1
+        print(result['tests'])
 
-        status = 1 if failed_counts == 0 else 0
+        if result['status'] == 'ERROR':
+            try_status = 0
+            failed_tests_count = None
+            tests_count = None
+        else:
+            try_status = 1
+            failed_tests_count = 0
+            tests_count = len(result['tests'])
+            for test in result['tests']:
+                if test == 'ERROR':
+                    failed_tests_count += 1
+
         CodePupilTaskTry.objects.create(
-            task=task,
+            pupil_task=CodePupilTask.objects.get(task=task, pupil=pupil),
             language=language,
             code=code,
-            status=status,
-            tests_count=len(result),
-            failed_counts=failed_counts
+            status=try_status,
+            tests_count=tests_count,
+            failed_tests_count=failed_tests_count,
         )
         data = {
-            'failed_counts': failed_counts,
+            'failed_count': failed_tests_count,
             'tests_count': tests_count,
-            'status': status,
+            'tests_score': None if tests_count is None else (tests_count - failed_tests_count) / tests_count * 100,
+            'status': try_status,
+            'error': result['tests'][0] if try_status == 0 else None
         }
         return Response(data, status.HTTP_200_OK)
 

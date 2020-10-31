@@ -89,8 +89,8 @@ class CodePupilTaskTry(models.Model):
     language = models.ForeignKey(ProgLanguage, on_delete=models.CASCADE)
     code = models.TextField(verbose_name='Код ученика')
     status = models.CharField(max_length=1, verbose_name='Успешность выполнения')
-    tests_count = models.IntegerField(default=0)
-    failed_tests_count = models.IntegerField(default=0)
+    tests_count = models.IntegerField(null=True)
+    failed_tests_count = models.IntegerField(null=True)
 
 
 # class CodeTaskFile(models.Model):
