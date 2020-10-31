@@ -235,3 +235,15 @@ class SingleTasksListAPIView(TeacherMixin, ListAPIView):
     def get_queryset(self):
         teacher = self.get_teacher(self.request)
         return teacher.codetask_set.all()
+
+
+class TaskToPupilAIView(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+
+    def put(self, request, task_id):
+        pupils_id = request.data['pupils_id']
+        task = get_object_or_404(CodeTask, pk=task_id)
+        for pupil in Pupil.objects.filter(ib__in=pupils_id):
+            CodePupilTask.objects.create(task=task, pupil=pupil)
+        return Response(status.HTTP_201_CREATED)
