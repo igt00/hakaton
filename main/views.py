@@ -32,7 +32,14 @@ class CreateUserAPIView(views.APIView):
         serializer = CreateUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'token_key': serializer.data['auth_token']}, status.HTTP_200_OK)
+        token = serializer.data['auth_token']
+        user = User.objects.get(auth_token=token)
+        data = {'token_key': token}
+        if getattr(user, 'teacher', False):
+            data['is_teacher'] = True
+        elif getattr(user, 'pupil', False):
+            data['is_teacher'] = False
+        return Response(data, status.HTTP_200_OK)
 
 
 class LoginUserAPIView(views.APIView):
@@ -46,7 +53,12 @@ class LoginUserAPIView(views.APIView):
         if user:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             token = get_object_or_404(Token, user=user)
-            return Response({'token_key': token.key}, status=status.HTTP_200_OK)
+            data = {'token_key': token}
+            if getattr(user, 'teacher', False):
+                data['is_teacher'] = True
+            elif getattr(user, 'pupil', False):
+                data['is_teacher'] = False
+            return Response(data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -244,7 +256,7 @@ class TaskToPupilAIView(TeacherMixin, views.APIView):
     def put(self, request, task_id):
         pupils_id = request.data['pupils_id']
         task = get_object_or_404(CodeTask, pk=task_id)
-        for pupil in Pupil.objects.filter(ib__in=pupils_id):
+        for pupil in Pupil.objects.filter(id__in=pupils_id):
             CodePupilTask.objects.create(task=task, pupil=pupil)
         return Response(status.HTTP_201_CREATED)
 
@@ -272,7 +284,17 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
     permission_classes = [IsAuthenticated, PupilPermission]
 
     def post(self, request, task_id):
-        pass
+        language = get_object_or_404(ProgLanguage, pk=request.data['lang']).name
+        code = request.data['code']
+        task = get_object_or_404(CodeTask, pk=task_id)
+        input= []
+        output = []
+        testsdata = task.testdata_set.all()
+        input = testsdata.values_list('input_data', flat=True)
+        output = testsdata.values_list('output_data', flat=True)
+
+
+
 
 
 class ProgLanguageAPIView(ListAPIView):
