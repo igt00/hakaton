@@ -284,7 +284,7 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
     permission_classes = [IsAuthenticated, PupilPermission]
 
     def post(self, request, task_id):
-        language = get_object_or_404(ProgLanguage, pk=request.data['lang']).name
+        language = get_object_or_404(ProgLanguage, pk=request.data['lang'])
         code = request.data['code']
         task = get_object_or_404(CodeTask, pk=task_id)
         input= []
@@ -292,9 +292,31 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
         testsdata = task.testdata_set.all()
         input = testsdata.values_list('input_data', flat=True)
         output = testsdata.values_list('output_data', flat=True)
+        runner = Runner(code, language.name, request.user.username, output, input)
+        result = runner.run_compile()
 
+        print(result)
+        failed_counts = 0
+        tests_count = len(result)
+        for test in result:
+            if test='ERROR':
+                failed_counts += 1
 
-
+        status = 1 if failed_counts == 0 else 0
+        CodePupilTaskTry.objects.create(
+            task=task,
+            language=language,
+            code=code,
+            status=status,
+            tests_count=len(result),
+            failed_counts=failed_counts
+        )
+        data = {
+            'failed_counts': failed_counts,
+            'tests_count': tests_count,
+            'status': status,
+        }
+        return Response(data, status.HTTP_200_OK)
 
 
 class ProgLanguageAPIView(ListAPIView):
