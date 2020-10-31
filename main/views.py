@@ -375,3 +375,12 @@ class ProgLanguageAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ProgLanguage.objects.all()
     serializer_class = ProgLanguageSerializer
+
+#
+# class ChangeSingleTaskAPIView(PupilMixin, views.APIView):
+#     authentication_classes = [SessionAuthentication]
+#     permission_classes = [IsAuthenticated, PupilPermission]
+#
+#     def put(self, request, task_id):
+#
+#         pass
