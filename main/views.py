@@ -10,11 +10,11 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilTask, TestData
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilTask, TestData, ProgLanguage
 from main.mixins import TeacherMixin, PupilMixin
 from main.serializers import (
     CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer,
-    SingleTasksListSerializer, PupilTaskListSerializer
+    SingleTasksListSerializer, PupilTaskListSerializer, ProgLanguageSerializer
 )
 from main.permissons import TeacherPermission, PupilPermission
 
@@ -273,3 +273,10 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
 
     def post(self, request, task_id):
         pass
+
+
+class ProgLanguageAPIView(ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = ProgLanguage.objects.all()
+    serializer_class = ProgLanguageSerializer

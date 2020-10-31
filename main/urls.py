@@ -4,7 +4,7 @@ from main.views import (
     CreateUserAPIView, LoginUserAPIView, ChangePasswordAPIView, LogoutUserAPIView, CabinetAPIView, PupilsListAPIView,
     AddPupilToTeacherAPIView, SandBoxAPIView, AddClassToTeacherAPIView, AddPupilToClassAPIView, ClassInfoAPIView,
     TeachersPupilsAPIView, ClassesListAPIView, CreateSingleTaskAPIView, SingleTasksListAPIView, TaskToPupilAIView,
-    PupilsTasksAPIView, PupilsCurrentTaskAPIView, PupilsSendSolutionAPIView
+    PupilsTasksAPIView, PupilsCurrentTaskAPIView, PupilsSendSolutionAPIView, ProgLanguageAPIView
 )
 
 urlpatterns = [
@@ -28,4 +28,5 @@ urlpatterns = [
     path('pupils_tasks/', PupilsTasksAPIView.as_view(), name='pupils_task'),
     path('pupils_tasks/<int:task_id>/', PupilsCurrentTaskAPIView.as_view(), name='current_task'),
     path('pupils_tasks/<int:task_id>/send_solution/', PupilsSendSolutionAPIView.as_view(), name='send_solution'),
+    path('get_languages/', ProgLanguageAPIView.as_view(), name='languages'),
 ]

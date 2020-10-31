@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 
-from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, ProgLanguage
 from main.validators import validate_password
 
 
@@ -111,3 +111,7 @@ class PupilTaskListSerializer(serializers.ModelSerializer):
         return obj.check_is_ready()
 
 
+class ProgLanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        models = ProgLanguage
+        fields = '__all__'
