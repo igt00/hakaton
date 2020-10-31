@@ -114,7 +114,9 @@ class AddPupilToTeacherAPIView(TeacherMixin, views.APIView):
     def put(self, request):
         teacher = self.get_teacher(request)
         pupils_id = request.data['pupils_id']
-        teacher.pupil_id.add(Pupil.objects.filter(id__in=pupils_id))
+        print(pupils_id)
+        for pupil in Pupil.objects.filter(id__in=pupils_id):
+            teacher.pupil_set.add(pupil)
         teacher.save()
         return Response(status.HTTP_200_OK)
 
@@ -222,3 +224,5 @@ class CreateSingleTaskAPIView(TeacherMixin, views.APIView):
                 output_data=test['output'],
             )
         return Response({'task_id': task.id}, status.HTTP_200_OK)
+
+
