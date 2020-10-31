@@ -17,7 +17,9 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
                 return True
         raise PermissionDenied
 
-    def has_object_permissionPypil(self, request, view, obj):
+
+class IsOwnerOrReadOnlyPypil(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
         if User2.objects.filter(user=request.user).exists():
