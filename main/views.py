@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from main.models import User2, Teacher, Pupil, PupilsClass
+from main.mixins import TeacherMixin
 from main.serializers import CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer
 
 from sandbox.authotestlib import Runner
@@ -103,19 +104,18 @@ class PupilsListAPIView(ListAPIView):
         return User2.objects.filter(id__in=user_pupil_ids)
 
 
-class AddPupilToTeacherAPIView(views.APIView):
+class AddPupilToTeacherAPIView(TeacherMixin, views.APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def put(self, request):
-        teacher = Teacher.objects.get(user=request.user.user2)
+        teacher = self.get_teacher()
         pupils_id = request.data['pupils_id']
         teacher.pupil_id.add(Pupil.objects.filter(id__in=pupils_id))
         teacher.save()
         return Response(status.HTTP_200_OK)
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
 class SandBoxAPIView(views.APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
@@ -132,12 +132,12 @@ class SandBoxAPIView(views.APIView):
         return Response(result)
 
 
-class AddClassToTeacherAPIView(views.APIView):
+class AddClassToTeacherAPIView(TeacherMixin, views.APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        teacher = Teacher.objects.get(user=request.user.user2)
+        teacher = self.get_teacher()
         title = request.data['title']
         pupils_class = PupilsClass.objects.create(teacher=teacher, title=title)
         return Response({'id': pupils_class.id}, status.HTTP_201_CREATED)
@@ -159,7 +159,7 @@ class ClassInfoAPIView(views.APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, response, class_id):
+    def get(self, request, class_id):
         class_object = PupilsClass.objects.get(pk=class_id)
         data = {}
         data['title'] = class_object.title
