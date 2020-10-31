@@ -1,5 +1,6 @@
 from rest_framework import views, status
 from django.contrib.auth.models import User
+from rest_framework.response import Response
 
 class CheckTokenView(views.APIView):
     def get(self, request):
