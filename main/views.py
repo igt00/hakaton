@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import User2, Teacher, Pupil, PupilsClass
+from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask
 from main.mixins import TeacherMixin
 from main.serializers import (
     CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer
@@ -189,7 +189,7 @@ class TeachersPupilsAPIView(TeacherMixin, ListAPIView):
 
     def get_queryset(self):
         teacher = self.get_teacher(self.request)
-        user_pupil_ids = teacher.pupil_set().all().values_list('user_id', flat=True)
+        user_pupil_ids = teacher.pupil_set.all().values_list('user_id', flat=True)
         return User2.objects.filter(id__in=user_pupil_ids)
 
 
@@ -208,4 +208,17 @@ class CreateSingleTaskAPIView(TeacherMixin, views.APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
 
     def post(self, request):
-        pass
+        teacher = self.get_teacher(request)
+        data = request.data
+        task = CodeTask.objects.create(
+            teacher=teacher,
+            name=data['name'],
+            description=data['descr'],
+        )
+        for test in data['tests']:
+            TestData.objects.create(
+                task=task,
+                input_data=test['input'],
+                output_data=test['output'],
+            )
+        return Response({'task_id': task.id}, status.HTTP_200_OK)
