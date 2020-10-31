@@ -376,11 +376,74 @@ class ProgLanguageAPIView(ListAPIView):
     queryset = ProgLanguage.objects.all()
     serializer_class = ProgLanguageSerializer
 
-#
-# class ChangeSingleTaskAPIView(PupilMixin, views.APIView):
-#     authentication_classes = [SessionAuthentication]
-#     permission_classes = [IsAuthenticated, PupilPermission]
-#
-#     def put(self, request, task_id):
-#
-#         pass
+
+class ChangeSingleTaskAPIView(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+
+    def get(self, request, task_id):
+        teacher = self.get_teacher(request)
+        task = get_object_or_404(CodeTask, pk=task_id)
+        data = {
+            'id': task_id,
+            'name': task.name,
+            'descr': task.description,
+            'pupils_count': task.get_tasks_pupil_count(),
+            'pupils': CabinetSerializer(task.get_task_pupil(), many=True),
+        }
+        return Response(data)
+
+    def delete(self, request, task_id):
+        teacher = self.get_teacher(request)
+        task = get_object_or_404(CodeTask, pk=task_id)
+        task.delete()
+        return Respone(status.HTTP_204_NO_CONTENT)
+
+
+class DeletePupilFromTeacher(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+
+    def put(self, request, pupil_id):
+        pupil = get_object_or_404(Pupil, pk=pupil_id)
+        pupil.teacher = None
+        pupil.save()
+        return Response(status.HTTP_204_NO_CONTENT)
+
+
+class DeletePupilFromClass(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+
+    def put(self, request, class_id, pupil_id):
+        pupils_class = get_object_or_404(PupilsClass, pk=class_id)
+        pupil = get_object_or_404(Pupil, pk=pupil_id)
+        pupils_class.remove(pupil)
+        pupils_class.save()
+        return Response(status.HTTP_204_NO_CONTENT)
+
+
+class DeleteClassAPIView(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+
+    def delete(self, request, class_id):
+        pupils_class = get_object_or_404(PupilsClass, pk=class_id)
+        pupils_class.delete()
+        return Response(status.HTTP_204_NO_CONTENT)
+
+
+class TaskToClassAPIView(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+
+    def post(self, request, class_id, task_id):
+        teacher = self.get_teacher(request)
+        pupils_class = get_object_or_404(PupilsClass, pk=class_id)
+        task = get_object_or_404(CodeTask, pk=task_id)
+        pupils_count = 0
+        for pupil in pupils_class.pupils:
+            pupils_count += 1
+            CodePupilTask.objects.create(task=task, pupil=pupil)
+        return Response({'pupils_count': pupils_count}, status.HTTP_201_CREATED)
+
