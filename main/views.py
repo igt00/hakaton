@@ -12,7 +12,9 @@ from rest_framework.response import Response
 
 from main.models import User2, Teacher, Pupil, PupilsClass
 from main.mixins import TeacherMixin
-from main.serializers import CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer
+from main.serializers import (
+    CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer
+)
 
 from sandbox.authotestlib import Runner
 
@@ -109,7 +111,7 @@ class AddPupilToTeacherAPIView(TeacherMixin, views.APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request):
-        teacher = self.get_teacher()
+        teacher = self.get_teacher(request)
         pupils_id = request.data['pupils_id']
         teacher.pupil_id.add(Pupil.objects.filter(id__in=pupils_id))
         teacher.save()
@@ -137,7 +139,7 @@ class AddClassToTeacherAPIView(TeacherMixin, views.APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        teacher = self.get_teacher()
+        teacher = self.get_teacher(request)
         title = request.data['title']
         pupils_class = PupilsClass.objects.create(teacher=teacher, title=title)
         return Response({'id': pupils_class.id}, status.HTTP_201_CREATED)
@@ -185,6 +187,16 @@ class TeachersPupilsAPIView(TeacherMixin, ListAPIView):
     serializer_class = CabinetSerializer
 
     def get_queryset(self):
-        teacher = self.get_teacher()
+        teacher = self.get_teacher(self.request)
         user_pupil_ids = teacher.pupil_set().all().values_list('user_id', flat=True)
         return User2.objects.filter(id__in=user_pupil_ids)
+
+
+class ClassesListAPIView(TeacherMixin, ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = PupilClassSerializer
+
+    def get_queryset(self):
+        teacher = self.get_teacher(self.request)
+        return teacher.pupilsclass_set.all()

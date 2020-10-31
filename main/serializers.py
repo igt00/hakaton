@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 
-from main.models import User2, Teacher, Pupil
+from main.models import User2, Teacher, Pupil, PupilsClass
 from main.validators import validate_password
 
 
@@ -72,3 +72,18 @@ class CabinetSerializer(serializers.ModelSerializer):
             return user.pupil.id
         return user.teacher.id
 
+
+class PupilClassSerializer(serializers.ModelSerializer):
+    teacher = serializers.SerializerMethodField()
+    pupils = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PupilsClass
+        fields = ['id', 'title', 'teacher', 'pupils']
+
+    def get_teacher(self, obj):
+        teacher = obj.teacher
+        return CabinetSerializer(teacher.user).data
+
+    def get_pupils(self, obj):
+        return CabinetSerializer(obj.pupils, many=True).data

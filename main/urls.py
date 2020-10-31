@@ -3,7 +3,7 @@ from django.urls import path
 from main.views import (
     CreateUserAPIView, LoginUserAPIView, ChangePasswordAPIView, LogoutUserAPIView, CabinetAPIView, PupilsListAPIView,
     AddPupilToTeacherAPIView, SandBoxAPIView, AddClassToTeacherAPIView, AddPupilToClassAPIView, ClassInfoAPIView,
-    TeachersPupilsAPIView,
+    TeachersPupilsAPIView, ClassesListAPIView
 )
 
 urlpatterns = [
@@ -19,4 +19,5 @@ urlpatterns = [
     path('add_class/', AddClassToTeacherAPIView.as_view(), name='add_class'),
     path('add_pupils_to_class/<int:class_id>/', AddPupilToClassAPIView.as_view(), name='add_pupils_to_class'),
     path('class_info/<int:class_id>/', ClassInfoAPIView.as_view(), name='class_info'),
+    path('classes_list/', ClassesListAPIView.as_view(), name='classes_list'),
 ]
