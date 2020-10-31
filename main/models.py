@@ -24,6 +24,12 @@ class Pupil(models.Model):
     teachers = models.ManyToManyField(Teacher, null=True, blank=True)
 
 
+class PupilsClass(models.Model):
+    teacher = models.ForeignKey(Teacher, on_delete=models.PROTECT)
+    pupils = models.ManyToManyField(Pupil, null=True, blank=True)
+    title = models.CharField(max_length=30)
+
+
 class CodeTask(models.Model):
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()

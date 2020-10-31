@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import User2, Teacher, Pupil
+from main.models import User2, Teacher, Pupil, PupilsClass
 from main.serializers import CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer
 
 from sandbox.authotestlib import Runner
@@ -132,8 +132,48 @@ class SandBoxAPIView(views.APIView):
         return Response(result)
 
 
+class AddClassToTeacherAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        teacher = Teacher.objects.get(user=request.user.user2)
+        title = request.data['title']
+        pupils_class = PupilsClass.objects.create(teacher=teacher, title=title)
+        return Response({'id': pupils_class.id}, status.HTTP_201_CREATED)
 
 
+class AddPupilToClassAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, class_id):
+        pupils_id = request.data['pupils_id']
+        class_object = PupilsClass.objects.get(pk=class_id)
+        class_object.pupils.add(Pupil.objects.filter(pk__in=pupils_id))
+        class_object.save()
+        return Response(status.HTTP_200_OK)
 
 
+class ClassInfoAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
+    def get(self, response, class_id):
+        class_object = PupilsClass.objects.get(pk=class_id)
+        data = {}
+        data['title'] = class_object.title
+        data['teacher'] = {
+            'id': class_object.teacher.user.id,
+            'surname': class_object.teacher.user.surname,
+            'first_name': class_object.teacher.user.first_name,
+            'second_name': class_object.teacher.user.second_name,
+        }
+        pupils = []
+        for pup in class_object.pupils.all():
+            pupils.append({
+                'id': pup.user.id,
+                'surname': pup.user.surname,
+                'first_name': pup.user.first_name,
+                'second_name': pup.user.second_name,
+            })

@@ -2,7 +2,7 @@ from django.urls import path
 
 from main.views import (
     CreateUserAPIView, LoginUserAPIView, ChangePasswordAPIView, LogoutUserAPIView, CabinetAPIView, PupilsListAPIView,
-    AddPupilToTeacherAPIView, SandBoxAPIView
+    AddPupilToTeacherAPIView, SandBoxAPIView, AddClassToTeacherAPIView, AddPupilToClassAPIView, ClassInfoAPIView
 )
 
 urlpatterns = [
@@ -14,4 +14,7 @@ urlpatterns = [
     path('pupils/', PupilsListAPIView.as_view(), name='pupil_list'),
     path('add_pupils/', AddPupilToTeacherAPIView.as_view(),name='add_pupils'),
     path('to_sandbox/', SandBoxAPIView.as_view(), name='sandbox'),
+    path('add_class/', AddClassToTeacherAPIView.as_view(), name='add_class'),
+    path('add_pupils_to_class/<int:class_id>/', AddPupilToClassAPIView.as_view(), name='add_pupils_to_class'),
+    path('class_info/<int:class_id>/', ClassInfoAPIView.as_view(), name='class_info'),
 ]
