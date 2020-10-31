@@ -109,3 +109,5 @@ class PupilTaskListSerializer(serializers.ModelSerializer):
 
     def get_status(self, obj):
         return obj.check_is_ready()
+
+
