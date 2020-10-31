@@ -4,7 +4,7 @@ from rest_framework.exceptions import PermissionDenied
 
 
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
+class TeacherPermission(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit it.
     """
