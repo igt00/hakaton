@@ -185,4 +185,6 @@ class TeachersPupilsAPIView(TeacherMixin, ListAPIView):
     serializer_class = CabinetSerializer
 
     def get_queryset(self):
-        pass
+        teacher = self.get_teacher()
+        user_pupil_ids = teacher.pupil_set().all().values_list('user_id', flat=True)
+        return User2.objects.filter(id__in=user_pupil_ids)

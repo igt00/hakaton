@@ -61,12 +61,14 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class CabinetSerializer(serializers.ModelSerializer):
-    pupil_id = serializers.SerializerMethodField()
+    pupil_or_teacher_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User2
-        fields = ['surname', 'first_name', 'second_name', 'gender', 'dt_created', 'email', 'dt_birthday', 'pupil_id']
+        fields = ['surname', 'first_name', 'second_name', 'gender', 'dt_created', 'email', 'dt_birthday', 'pupil_or_teacher_id']
 
-    def get_pupil_id(self, user):
-        return user.pupil.id
+    def get_pupil_or_teacher_id(self, user):
+        if getattr(user, 'pupil', None):
+            return user.pupil.id
+        return user.teacher.id
 

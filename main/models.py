@@ -16,7 +16,7 @@ class User2(models.Model):
 
 
 class Teacher(models.Model):
-    user = models.ForeignKey(User2, on_delete=models.CASCADE)
+    user = models.OneToOneField(User2, on_delete=models.CASCADE)
 
 
 class Pupil(models.Model):
