@@ -11,12 +11,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask
-from main.mixins import TeacherMixin
+from main.mixins import TeacherMixin, PupilMixin
 from main.serializers import (
     CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer,
-    SingleTasksListSerializer,
+    SingleTasksListSerializer, PupilTaskListSerializer
 )
-from main.permissons import TeacherPermission
+from main.permissons import TeacherPermission, PupilPermission
 
 from sandbox.authotestlib import Runner
 
@@ -247,3 +247,13 @@ class TaskToPupilAIView(TeacherMixin, views.APIView):
         for pupil in Pupil.objects.filter(ib__in=pupils_id):
             CodePupilTask.objects.create(task=task, pupil=pupil)
         return Response(status.HTTP_201_CREATED)
+
+
+class PupilsTasksAPIView(PupilMixin, ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, PupilPermission]
+    serializer_class = PupilTaskListSerializer
+
+    def get_queryset(self):
+        pupil = self.get_pupil(self.request)
+        return pupil.codepupiltask_set.all()

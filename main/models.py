@@ -63,6 +63,9 @@ class CodePupilTask(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
     pupil = models.ForeignKey(Pupil, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
 
+    def check_is_ready(self):
+        return self.codepupiltask_set.filter(status=1).exists()
+
 
 class ProgLanguage(models.Model):
     name = models.CharField(max_length=30, verbose_name='Язык программирования')

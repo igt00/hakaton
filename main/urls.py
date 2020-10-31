@@ -3,7 +3,8 @@ from django.urls import path
 from main.views import (
     CreateUserAPIView, LoginUserAPIView, ChangePasswordAPIView, LogoutUserAPIView, CabinetAPIView, PupilsListAPIView,
     AddPupilToTeacherAPIView, SandBoxAPIView, AddClassToTeacherAPIView, AddPupilToClassAPIView, ClassInfoAPIView,
-    TeachersPupilsAPIView, ClassesListAPIView, CreateSingleTaskAPIView, SingleTasksListAPIView, TaskToPupilAIView
+    TeachersPupilsAPIView, ClassesListAPIView, CreateSingleTaskAPIView, SingleTasksListAPIView, TaskToPupilAIView,
+    PupilsTasksAPIView,
 )
 
 urlpatterns = [
@@ -23,4 +24,6 @@ urlpatterns = [
     path('single_task/', CreateSingleTaskAPIView.as_view(), name='create_single_task'),
     path('all_single_tasks/', SingleTasksListAPIView.as_view(), name='list_single_tasks'),
     path('task_to_pupil/<int:task_id>/', TaskToPupilAIView.as_view(), name='task_to_pupil'),
+
+    path('pupils_tasks/', PupilsTasksAPIView.as_view(), name='pupils_task'),
 ]

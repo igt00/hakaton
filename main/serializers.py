@@ -98,3 +98,14 @@ class SingleTasksListSerializer(serializers.ModelSerializer):
 
     def get_pupils_count(self, obj):
         return obj.codepupiltask_set.count()
+
+
+class PupilTaskListSerializer(serializers.ModelSerializer):
+    is_ready = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CodeTask
+        fields = ['id', 'name', 'is_ready']
+
+    def get_status(self, obj):
+        return obj.check_is_ready()
