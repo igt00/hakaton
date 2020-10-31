@@ -53,6 +53,12 @@ class CodeToLesson(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Урок к которому относится задача')
 
 
+class TestData(model.Model):
+    task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
+    input_data = models.CharField(max_length=64, verbose_name='Входные данные')
+    output_data = models.CharField(max_length=64, verbose_name='Выходные данные')
+
+
 class CodePupilTask(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
     pupil = models.ForeignKey(Pupil, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
