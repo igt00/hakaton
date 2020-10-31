@@ -5,7 +5,6 @@ from main.views import (
     AddPupilToTeacherAPIView, SandBoxAPIView, AddClassToTeacherAPIView, AddPupilToClassAPIView, ClassInfoAPIView,
     TeachersPupilsAPIView, ClassesListAPIView, CreateSingleTaskAPIView, SingleTasksListAPIView, TaskToPupilAIView,
     PupilsTasksAPIView, PupilsCurrentTaskAPIView, PupilsSendSolutionAPIView, ProgLanguageAPIView,
-    ChangeSingleTaskAPIView
 )
 
 urlpatterns = [

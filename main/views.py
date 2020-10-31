@@ -4,7 +4,7 @@ from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework.authentication import SessionAuthentication
+# from rest_framework.authentication import SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -84,8 +84,8 @@ class LoginUserAPIView(views.APIView):
 
 
 class LogoutUserAPIView(views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
 
     def get(self,  request):
         logout(request)
@@ -93,8 +93,8 @@ class LogoutUserAPIView(views.APIView):
 
 
 class ChangePasswordAPIView(views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
@@ -120,8 +120,8 @@ class ChangePasswordAPIView(views.APIView):
 
 
 class CabinetAPIView(views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
 
     def get(self, request):
         serializer = CabinetSerializer(request.user.user2)
@@ -132,8 +132,8 @@ class CabinetAPIView(views.APIView):
 
 
 class PupilsListAPIView(ListAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
     serializer_class = CabinetSerializer
 
     def get_queryset(self):
@@ -141,9 +141,9 @@ class PupilsListAPIView(ListAPIView):
         return User2.objects.filter(id__in=user_pupil_ids)
 
 
-class AddPupilToTeacherAPIView(TeacherMixin, views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermission]
+class AddPupilToTeacherAPIView(views.APIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, TeacherPermission]
 
     def put(self, request):
         teacher = self.get_teacher(request)
@@ -156,8 +156,8 @@ class AddPupilToTeacherAPIView(TeacherMixin, views.APIView):
 
 
 class SandBoxAPIView(views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
 
     def post(self, request):
         code = request.data['code']
@@ -171,9 +171,9 @@ class SandBoxAPIView(views.APIView):
         return Response(result)
 
 
-class AddClassToTeacherAPIView(TeacherMixin, views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermission]
+class AddClassToTeacherAPIView(views.APIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, TeacherPermission]
 
     def post(self, request):
         teacher = self.get_teacher(request)
@@ -183,8 +183,8 @@ class AddClassToTeacherAPIView(TeacherMixin, views.APIView):
 
 
 class AddPupilToClassAPIView(views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
 
     def put(self, request, class_id):
         pupils_id = request.data['pupils_id']
@@ -195,8 +195,8 @@ class AddPupilToClassAPIView(views.APIView):
 
 
 class ClassInfoAPIView(views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
 
     def get(self, request, class_id):
         class_object = PupilsClass.objects.get(pk=class_id)
@@ -218,9 +218,9 @@ class ClassInfoAPIView(views.APIView):
             })
 
 
-class TeachersPupilsAPIView(TeacherMixin, ListAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermission]
+class TeachersPupilsAPIView(ListAPIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, TeacherPermission]
     serializer_class = CabinetSerializer
 
     def get_queryset(self):
@@ -229,9 +229,9 @@ class TeachersPupilsAPIView(TeacherMixin, ListAPIView):
         return User2.objects.filter(id__in=user_pupil_ids)
 
 
-class ClassesListAPIView(TeacherMixin, ListAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated,TeacherPermission]
+class ClassesListAPIView(ListAPIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated,TeacherPermission]
     serializer_class = PupilClassSerializer
 
     def get_queryset(self):
@@ -239,9 +239,9 @@ class ClassesListAPIView(TeacherMixin, ListAPIView):
         return teacher.pupilsclass_set.all()
 
 
-class CreateSingleTaskAPIView(TeacherMixin, views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermission]
+class CreateSingleTaskAPIView(views.APIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, TeacherPermission]
 
     def post(self, request):
         teacher = self.get_teacher(request)
@@ -260,9 +260,9 @@ class CreateSingleTaskAPIView(TeacherMixin, views.APIView):
         return Response({'task_id': task.id}, status.HTTP_200_OK)
 
 
-class SingleTasksListAPIView(TeacherMixin, ListAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermission]
+class SingleTasksListAPIView(ListAPIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, TeacherPermission]
     serializer_class = SingleTasksListSerializer
 
     def get_queryset(self):
@@ -270,9 +270,9 @@ class SingleTasksListAPIView(TeacherMixin, ListAPIView):
         return teacher.codetask_set.all()
 
 
-class TaskToPupilAIView(TeacherMixin, views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermission]
+class TaskToPupilAIView(views.APIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, TeacherPermission]
 
     def put(self, request, task_id):
         pupils_id = request.data['pupils_id']
@@ -283,8 +283,8 @@ class TaskToPupilAIView(TeacherMixin, views.APIView):
 
 
 class PupilsTasksAPIView(PupilMixin, ListAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, PupilPermission]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, PupilPermission]
     serializer_class = PupilTaskListSerializer
 
     def get_queryset(self):
@@ -292,9 +292,9 @@ class PupilsTasksAPIView(PupilMixin, ListAPIView):
         return pupil.codepupiltask_set.all()
 
 
-class PupilsCurrentTaskAPIView(PupilMixin, RetrieveAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, PupilPermission]
+class PupilsCurrentTaskAPIView(RetrieveAPIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, PupilPermission]
 
     def get(self, request, task_id):
         pupil = self.get_pupil(request)
@@ -321,9 +321,9 @@ class PupilsCurrentTaskAPIView(PupilMixin, RetrieveAPIView):
         return Response(data, status.HTTP_200_OK)
 
 
-class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated, PupilPermission]
+class PupilsSendSolutionAPIView(views.APIView):
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated, PupilPermission]
 
     def post(self, request, task_id):
         pupil = self.get_pupil(request)
@@ -371,8 +371,8 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
 
 
 class ProgLanguageAPIView(ListAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = ()  # [SessionAuthentication]
+    permission_classes = ()  # [IsAuthenticated]
     queryset = ProgLanguage.objects.all()
     serializer_class = ProgLanguageSerializer
 
