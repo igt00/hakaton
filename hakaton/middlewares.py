@@ -1,4 +1,3 @@
-from django.middleware import csrf
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth.models import User
 

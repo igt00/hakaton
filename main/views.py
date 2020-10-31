@@ -2,6 +2,7 @@ from rest_framework import views, status
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
 
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.authtoken.models import Token
@@ -11,6 +12,11 @@ from rest_framework.response import Response
 
 from main.models import User2, Teacher, Pupil
 from main.serializers import CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer
+
+from sandbox.authotestlib import Runner
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 class CreateUserAPIView(views.APIView):
@@ -107,3 +113,27 @@ class AddPupilToTeacherAPIView(views.APIView):
         teacher.pupil_id.add(Pupil.objects.filter(id__in=pupils_id))
         teacher.save()
         return Response(status.HTTP_200_OK)
+
+
+class SandBoxAPIView(views.APIView):
+#     authentication_classes = [SessionAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_exempt, name='dispatch')
+    def post(self, request):
+        code = request.data['code']
+        lang = request.data['lang']
+        input = request.data['input']
+        output = request.data['output']
+        runner = Runner(code, lang, 'username', output, input)
+        result = runner.run_python()
+
+        print(result)
+        return Response(result)
+
+
+
+
+
+
+
