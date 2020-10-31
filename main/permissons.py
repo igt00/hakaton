@@ -24,4 +24,3 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             if Pupil.objects.filter(user=request.user.user2).exists():
                 return True
         raise PermissionDenied
-
