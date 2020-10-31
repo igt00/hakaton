@@ -31,13 +31,13 @@ class PupilsClass(models.Model):
 
 
 class Course(models.Model):
-    name = first_name = models.CharField(max_length=40, verbose_name='Название курса')
+    name = models.CharField(max_length=40, verbose_name='Название курса')
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
 
 class Lesson(models.Model):
-    name = first_name = models.CharField(max_length=40, verbose_name='Название урока')
+    name = models.CharField(max_length=40, verbose_name='Название урока')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс к которому относится урок')
     description = models.TextField()
 
