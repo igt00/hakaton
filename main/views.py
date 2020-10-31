@@ -115,11 +115,11 @@ class AddPupilToTeacherAPIView(views.APIView):
         return Response(status.HTTP_200_OK)
 
 
+# @method_decorator(csrf_exempt, name='dispatch')
 class SandBoxAPIView(views.APIView):
-#     authentication_classes = [SessionAuthentication]
-#     permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
-    @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request):
         code = request.data['code']
         lang = request.data['lang']
