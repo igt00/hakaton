@@ -37,13 +37,13 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
-    course = models.OneToOneField(Course, on_delete=models.CASCADE, verbose_name='Курс к которому относится урок')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс к которому относится урок')
     description = models.TextField()
 
 
 class CodeTask(models.Model):
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
-    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, verbose_name='Урок к которому относится задача')
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Урок к которому относится задача')
     description = models.TextField()
 
 
