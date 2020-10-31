@@ -31,18 +31,26 @@ class PupilsClass(models.Model):
 
 
 class Course(models.Model):
+    name = models.CharField(max_length=40, verbose_name='Название курса')
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
 
 class Lesson(models.Model):
+    name = models.CharField(max_length=40, verbose_name='Название урока')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс к которому относится урок')
     description = models.TextField()
 
 
 class CodeTask(models.Model):
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Урок к которому относится задача')
+    name = models.CharField(max_length=40, verbose_name='Название задачи')
+    teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
+
+
+class CodeToLesson(models.Model):
+    task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Урок к которому относится задача')
 
 
 class CodePupilTask(models.Model):
