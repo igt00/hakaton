@@ -34,10 +34,19 @@ class CreateUserAPIView(views.APIView):
         serializer.save()
         token = serializer.data['auth_token']
         user = User.objects.get(auth_token=token)
+        user2 = User2.objects.get(user=user)
         data = {'token_key': token}
-        if getattr(user, 'teacher', False):
+        try:
+            teacher = Teacher.objects.get(user=user2)
+        except:
+            teacher = None
+        try:
+            pupil = Pupil.objects.get(user=user2)
+        except:
+            pupil = None
+        if teacher:
             data['is_teacher'] = True
-        elif getattr(user, 'pupil', False):
+        elif pupil:
             data['is_teacher'] = False
         return Response(data, status.HTTP_200_OK)
 
@@ -52,11 +61,21 @@ class LoginUserAPIView(views.APIView):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            token = get_object_or_404(Token, user=user)
+            token = get_object_or_404(Token, user=user).key
+            print(token)
             data = {'token_key': token}
-            if getattr(user, 'teacher', False):
+            user2 = User2.objects.get(user=user)
+            try:
+                teacher = Teacher.objects.get(user=user2)
+            except:
+                teacher = None
+            try:
+                pupil = Pupil.objects.get(user=user2)
+            except:
+                pupil = None
+            if teacher:
                 data['is_teacher'] = True
-            elif getattr(user, 'pupil', False):
+            elif pupil:
                 data['is_teacher'] = False
             return Response(data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -299,7 +318,7 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
         failed_counts = 0
         tests_count = len(result)
         for test in result:
-            if test='ERROR':
+            if test == 'ERROR':
                 failed_counts += 1
 
         status = 1 if failed_counts == 0 else 0
