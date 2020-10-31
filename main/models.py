@@ -43,7 +43,7 @@ class Lesson(models.Model):
 
 
 class CodeTask(models.Model):
-    name = first_name = models.CharField(max_length=40, verbose_name='Название задачи')
+    name = models.CharField(max_length=40, verbose_name='Название задачи')
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
 
