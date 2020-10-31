@@ -30,8 +30,20 @@ class PupilsClass(models.Model):
     title = models.CharField(max_length=30)
 
 
+class Course(models.Model):
+    teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
+    description = models.TextField()
+
+
+class Lesson(models.Model):
+    teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
+    course = models.OneToOneField(Course, on_delete=models.CASCADE, verbose_name='Курс к которому относится урок')
+    description = models.TextField()
+
+
 class CodeTask(models.Model):
     teacher = models.OneToOneField(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
+    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, verbose_name='Урок к которому относится задача')
     description = models.TextField()
 
 
@@ -49,6 +61,7 @@ class CodePupilTaskTry(models.Model):
     pupil_task = models.ForeignKey(CodePupilTask, on_delete=models.CASCADE)
     language = models.ForeignKey(ProgLanguage, on_delete=models.CASCADE)
     code = models.TextField(verbose_name='Код ученика')
+    status = models.CharField(max_length=1, verbose_name='Успешность выполнения')
 
 
 # class CodeTaskFile(models.Model):
