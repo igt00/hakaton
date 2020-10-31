@@ -1,11 +1,12 @@
+
 import subprocess
 import os
 
 
 class Runner(object):
 
-    def __init__(self, file, lang, username, output, input_str):
-        self.file = file
+    def __init__(self, code, lang, username, output, input_str):
+        self.code = code
         self.lang = lang
         self.username = username
         self.CURRENT_LANG = ['Python', 'C++']
@@ -24,7 +25,7 @@ class Runner(object):
         file_name = self.username + r'.cpp'
         file_name_exe = self.username + r'.exe'
         file = open(file_name, 'w')
-        file.write(self.file)
+        file.write(self.code)
         file.close()
         compile_file = subprocess.run(['g++', file_name, '-o', file_name_exe],
                                       stdout=subprocess.PIPE,
@@ -38,7 +39,7 @@ class Runner(object):
                                         stderr=subprocess.PIPE,
                                         input=self.input_str[i])
                 if result.returncode == 0:
-                    if result.stdout.strip()[:-44] == self.output[i]:
+                    if result.stdout.strip() == self.output[i]:
                         result_func['tests'].append('OK')
                     else:
 
@@ -47,19 +48,18 @@ class Runner(object):
                     result_func['status'] = 'ERROR'
                     result_func['tests'].append(result.stderr.strip())
                     break
+            os.remove(file_name_exe)
         else:
             result_func['status'] = 'ERROR'
             result_func['tests'].append(compile_file.stderr.strip())
         os.remove(file_name)
-        if os.path.exists(file_name_exe):
-            os.remove(file_name_exe)
         return result_func
 
     def run_python(self):
         result_func = {'status': None, 'tests': []}
         file_name = self.username + r'.py'
         file = open(file_name, 'w')
-        file.write(self.file)
+        file.write(self.code)
         file.close()
         for i in range(len(self.input_str)):
             result = subprocess.run(['python', file_name],
