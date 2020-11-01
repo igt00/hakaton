@@ -82,11 +82,10 @@ class CabinetSerializer(serializers.ModelSerializer):
 class PupilClassSerializer(serializers.ModelSerializer):
     teacher = serializers.SerializerMethodField()
     pupils = serializers.SerializerMethodField()
-    score = serializers.SerializerMethodField()
 
     class Meta:
         model = PupilsClass
-        fields = ['id', 'title', 'teacher', 'pupils', 'score']
+        fields = ['id', 'title', 'teacher', 'pupils']
 
     def get_teacher(self, obj):
         teacher = obj.teacher
