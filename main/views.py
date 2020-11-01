@@ -338,7 +338,7 @@ class PupilsSendSolutionAPIView(PupilMixin, views.APIView):
         testsdata = task.testdata_set.all()
         input = testsdata.values_list('input_data', flat=True)
         output = testsdata.values_list('output_data', flat=True)
-        runner = Runner(code, language.name, request.user.username, output, input)
+        runner = Runner(code, language.name, request.user.username, output, input, 'STRING', 'TEST')
         result = runner.run_compile()
 
         print(result['tests'])
