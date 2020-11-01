@@ -18,7 +18,6 @@ urlpatterns = [
     path('pupils/', PupilsListAPIView.as_view(), name='pupil_list'),
     path('teachers_pupils/', TeachersPupilsAPIView.as_view(), name='teathecrs_pupils'),
     path('add_pupils/', AddPupilToTeacherAPIView.as_view(),name='add_pupils'),
-    path('to_sandbox/', SandBoxAPIView.as_view(), name='sandbox'),
     path('add_class/', AddClassToTeacherAPIView.as_view(), name='add_class'),
     path('add_pupils_to_class/<int:class_id>/', AddPupilToClassAPIView.as_view(), name='add_pupils_to_class'),
     path('delete_pupil_from_teacher/<int:pupil_id>/', DeletePupilFromTeacher.as_view(), name='delete_pupil'),
@@ -30,11 +29,12 @@ urlpatterns = [
     path('single_task/<int:task_id>/', ChangeSingleTaskAPIView.as_view(), name='change_single_task'),
     path('all_single_tasks/', SingleTasksListAPIView.as_view(), name='list_single_tasks'),
     path('task_to_pupil/<int:task_id>/', TaskToPupilAIView.as_view(), name='task_to_pupil'),
-    path('task-to_class/<int:class_id>/<int:task_id>/', TaskToClassAPIView.as_view(),name='task_to_class'),
+    path('task_to_class/<int:class_id>/<int:task_id>/', TaskToClassAPIView.as_view(),name='task_to_class'),
     path('classes_tasks/<int:class_id>/', ClassesTaskAPIViews.as_view(), name='class_tests'),
 
     path('pupils_tasks/', PupilsTasksAPIView.as_view(), name='pupils_task'),
     path('pupils_tasks/<int:task_id>/', PupilsCurrentTaskAPIView.as_view(), name='current_task'),
     path('pupils_tasks/<int:task_id>/send_solution/', PupilsSendSolutionAPIView.as_view(), name='send_solution'),
     path('get_languages/', ProgLanguageAPIView.as_view(), name='languages'),
+    path('to_sandbox/', SandBoxAPIView.as_view(), name='sandbox'),
 ]

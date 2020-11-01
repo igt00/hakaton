@@ -453,7 +453,7 @@ class TaskToClassAPIView(TeacherMixin, views.APIView):
         pupils_count = 0
         task.task_to_class = True
         task_to_class = pupils_class
-        for pupil in pupils_class.pupils:
+        for pupil in pupils_class.pupils.all():
             pupils_count += 1
             CodePupilTask.objects.create(task=task, pupil=pupil, task_to_class=True)
         return Response({'pupils_count': pupils_count}, status.HTTP_201_CREATED)
@@ -466,8 +466,8 @@ class ClassesTaskAPIViews(TeacherMixin, views.APIView):
 
     def get(self, request, class_id):
         teacher = self.get_teacher(self.request)
-        pupilclass = get_object_or_404(PupilClass, pk=class_id)
+        pupilclass = get_object_or_404(PupilsClass, pk=class_id)
         data = []
-        serializer = CodeTAskSerializer(teacher.codetask_set.filter(pupilclass=pupilclass), many=True)
+        serializer = CodeTaskSerializer(teacher.codetask_set.filter(pupilclass=pupilclass), many=True)
         return Response(serializer.data)
 

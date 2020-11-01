@@ -63,8 +63,8 @@ class CodeToLesson(models.Model):
 
 class TestData(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
-    input_data = models.CharField(max_length=64, verbose_name='Входные данные')
-    output_data = models.CharField(max_length=64, verbose_name='Выходные данные')
+    input_data = models.CharField(max_length=64, verbose_name='Входные данные', null=True)
+    output_data = models.CharField(max_length=64, verbose_name='Выходные данные', null=True)
 
 
 class CodePupilTask(models.Model):
