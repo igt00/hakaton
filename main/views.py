@@ -38,7 +38,7 @@ class CreateUserAPIView(views.APIView):
 #         user = User.objects.get(auth_token=token)
 #         print(user)
 #         user2 = User2.objects.get(user=user)
-#         data = {'token_key': token}
+        data = {'token_key': token}
 #         try:
 #             teacher = Teacher.objects.get(user=user2)
 #         except:
