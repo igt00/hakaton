@@ -14,7 +14,7 @@ from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, CodePupilT
 from main.mixins import TeacherMixin, PupilMixin
 from main.serializers import (
     CreateUserSerializer, ChangePasswordSerializer, CabinetSerializer, PupilClassSerializer,
-    SingleTasksListSerializer, PupilTaskListSerializer, ProgLanguageSerializer
+    SingleTasksListSerializer, PupilTaskListSerializer, ProgLanguageSerializer, CodeTaskSerializer
 )
 from main.permissons import TeacherPermission, PupilPermission
 
@@ -189,7 +189,8 @@ class AddPupilToClassAPIView(views.APIView):
     def put(self, request, class_id):
         pupils_id = request.data['pupils_id']
         class_object = PupilsClass.objects.get(pk=class_id)
-        class_object.pupils.add(Pupil.objects.filter(pk__in=pupils_id))
+        for pupil in Pupil.objects.filter(pk__in=pupils_id):
+            class_object.pupils.add(pupil)
         class_object.save()
         return Response(status.HTTP_200_OK)
 
@@ -384,12 +385,18 @@ class ChangeSingleTaskAPIView(TeacherMixin, views.APIView):
     def get(self, request, task_id):
         teacher = self.get_teacher(request)
         task = get_object_or_404(CodeTask, pk=task_id)
+        if task.task_to_class:
+            users = [pupil.user for pupil in task.pupilclass.pupils.all()]
+        else:
+            users = [codepupil.pupil.user for codepupil in task.get_tasks_pupil()]
         data = {
             'id': task_id,
             'name': task.name,
             'descr': task.description,
             'pupils_count': task.get_tasks_pupil_count(),
-            'pupils': CabinetSerializer(task.get_task_pupil(), many=True),
+            'pupils': CabinetSerializer(users, many=True).data,
+            'task_to_class': task.task_to_class,
+            'pupilclass': PupilClassSerializer(task.pupilclass).data,
         }
         return Response(data)
 
@@ -397,7 +404,7 @@ class ChangeSingleTaskAPIView(TeacherMixin, views.APIView):
         teacher = self.get_teacher(request)
         task = get_object_or_404(CodeTask, pk=task_id)
         task.delete()
-        return Respone(status.HTTP_204_NO_CONTENT)
+        return Response(status.HTTP_204_NO_CONTENT)
 
 
 class DeletePupilFromTeacher(TeacherMixin, views.APIView):
@@ -405,10 +412,12 @@ class DeletePupilFromTeacher(TeacherMixin, views.APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
 
     def put(self, request, pupil_id):
+        teacher = self.get_teacher(request)
         pupil = get_object_or_404(Pupil, pk=pupil_id)
         pupil.teacher = None
+        teacher.pupil_set.remove(pupil)
         pupil.save()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DeletePupilFromClass(TeacherMixin, views.APIView):
@@ -418,9 +427,9 @@ class DeletePupilFromClass(TeacherMixin, views.APIView):
     def put(self, request, class_id, pupil_id):
         pupils_class = get_object_or_404(PupilsClass, pk=class_id)
         pupil = get_object_or_404(Pupil, pk=pupil_id)
-        pupils_class.remove(pupil)
+        pupils_class.pupils.remove(pupil)
         pupils_class.save()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DeleteClassAPIView(TeacherMixin, views.APIView):
@@ -442,8 +451,23 @@ class TaskToClassAPIView(TeacherMixin, views.APIView):
         pupils_class = get_object_or_404(PupilsClass, pk=class_id)
         task = get_object_or_404(CodeTask, pk=task_id)
         pupils_count = 0
+        task.task_to_class = True
+        task_to_class = pupils_class
         for pupil in pupils_class.pupils:
             pupils_count += 1
-            CodePupilTask.objects.create(task=task, pupil=pupil)
+            CodePupilTask.objects.create(task=task, pupil=pupil, task_to_class=True)
         return Response({'pupils_count': pupils_count}, status.HTTP_201_CREATED)
+
+
+class ClassesTaskAPIViews(TeacherMixin, views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated, TeacherPermission]
+    serializer_class = CodeTaskSerializer
+
+    def get(self, request, class_id):
+        teacher = self.get_teacher(self.request)
+        pupilclass = get_object_or_404(PupilClass, pk=class_id)
+        data = []
+        serializer = CodeTAskSerializer(teacher.codetask_set.filter(pupilclass=pupilclass), many=True)
+        return Response(serializer.data)
 

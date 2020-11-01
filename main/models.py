@@ -46,6 +46,8 @@ class CodeTask(models.Model):
     name = models.CharField(max_length=40, verbose_name='Название задачи')
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Пользователь в роли учителя')
     description = models.TextField()
+    task_to_class = models.BooleanField(default=False)
+    pupilclass = models.ForeignKey(PupilsClass, null=True,on_delete=models.CASCADE)
 
     def get_tasks_pupil(self):
         return self.codepupiltask_set.all()
@@ -68,6 +70,7 @@ class TestData(models.Model):
 class CodePupilTask(models.Model):
     task = models.ForeignKey(CodeTask, on_delete=models.CASCADE)
     pupil = models.ForeignKey(Pupil, on_delete=models.CASCADE, verbose_name='Пользователь в роли ученика')
+    task_to_class = models.BooleanField(default=False)
 
     def get_tries(self):
         return self.codepupiltasktry_set.all()

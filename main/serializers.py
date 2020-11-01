@@ -70,9 +70,12 @@ class CabinetSerializer(serializers.ModelSerializer):
         fields = ['surname', 'first_name', 'second_name', 'gender', 'dt_created', 'email', 'dt_birthday', 'pupil_or_teacher_id']
 
     def get_pupil_or_teacher_id(self, user):
-        if getattr(user, 'pupil', None):
-            return user.pupil.id
-        return user.teacher.id
+        try:
+            prof = user.pupil
+        except:
+            prof = user.teacher
+
+        return prof.id
 
 
 class PupilClassSerializer(serializers.ModelSerializer):
@@ -88,7 +91,8 @@ class PupilClassSerializer(serializers.ModelSerializer):
         return CabinetSerializer(teacher.user).data
 
     def get_pupils(self, obj):
-        return CabinetSerializer(obj.pupils, many=True).data
+        users = [pupil.user for pupil in obj.pupils.all()]
+        return CabinetSerializer(users, many=True).data
 
 
 class SingleTasksListSerializer(serializers.ModelSerializer):
@@ -127,3 +131,15 @@ class ProgLanguageSerializer(serializers.ModelSerializer):
     class Meta:
         models = ProgLanguage
         fields = '__all__'
+
+
+class CodeTaskSerializer(serializers.ModelSerializer):
+    teacher = serializers.SerializerMethodField()
+    count_of_ready = serializers.SerializerMethodField()
+
+    class Meta:
+        models = CodeTask
+        fields = ['id', 'name', 'teacher', 'description']
+
+    def get_teacher(self, obj):
+        return CabinetSerializer(obj.teacher.user)
