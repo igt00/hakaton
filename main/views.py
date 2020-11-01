@@ -17,6 +17,7 @@ from main.serializers import (
     SingleTasksListSerializer, PupilTaskListSerializer, ProgLanguageSerializer, CodeTaskSerializer
 )
 from main.permissons import TeacherPermission, PupilPermission
+from main.utils import count_pupil_score
 
 from sandbox.authotestlib import Runner
 
@@ -319,6 +320,7 @@ class PupilsCurrentTaskAPIView(PupilMixin, RetrieveAPIView):
             'first_name': task.teacher.user.first_name,
             'second_name': task.teacher.user.second_name,
         }
+        data['score'] = count_pupil_score(task, pupil)
         return Response(data, status.HTTP_200_OK)
 
 

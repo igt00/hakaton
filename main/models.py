@@ -76,7 +76,7 @@ class CodePupilTask(models.Model):
         return self.codepupiltasktry_set.all()
 
     def check_is_ready(self):
-        return self.get_tries().filter(status=1).exists()
+        return self.get_tries().filter(failed_tests_count=0).exists()
 
     def get_count_tries(self):
         return self.get_tries().count()

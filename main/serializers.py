@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 from main.models import User2, Teacher, Pupil, PupilsClass, CodeTask, ProgLanguage, CodePupilTask
 from main.validators import validate_password
+from main.utils import count_pupil_score
 
 
 class CreateUserSerializer(serializers.Serializer):
@@ -81,10 +82,11 @@ class CabinetSerializer(serializers.ModelSerializer):
 class PupilClassSerializer(serializers.ModelSerializer):
     teacher = serializers.SerializerMethodField()
     pupils = serializers.SerializerMethodField()
+    score = serializers.SerializerMethodField()
 
     class Meta:
         model = PupilsClass
-        fields = ['id', 'title', 'teacher', 'pupils']
+        fields = ['id', 'title', 'teacher', 'pupils', 'score']
 
     def get_teacher(self, obj):
         teacher = obj.teacher
@@ -111,10 +113,11 @@ class PupilTaskListSerializer(serializers.ModelSerializer):
     teacher = serializers.SerializerMethodField()
     name = serializers.CharField(source='task.name')
     id = serializers.IntegerField(source='task.id', read_only=True)
+    score = serializers.SerializerMethodField()
 
     class Meta:
         model = CodePupilTask
-        fields = ['id', 'name', 'is_ready', 'teacher']
+        fields = ['id', 'name', 'is_ready', 'teacher', 'score']
 
     def get_is_ready(self, obj):
         return obj.check_is_ready()
@@ -125,6 +128,9 @@ class PupilTaskListSerializer(serializers.ModelSerializer):
             'first_name': obj.task.teacher.user.first_name,
             'second_name': obj.task.teacher.user.second_name,
         }
+
+    def get_score(self, obj):
+        return count_pupil_score(obj.task, obj.pupil)
 
 
 class ProgLanguageSerializer(serializers.ModelSerializer):
